@@ -63,11 +63,12 @@
 		   </div>
     </footer>
   </body>
-
+<!--Get the player name from the input field and send it to the server-->
 	<script>
 		var socket = io.connect();
   		
-		
+		//this function is automatically called whenever the button above is clicked
+		//youll see the onclick="enterName" to signify this
 		function enterName(){
 			var n = document.getElementById("name").value
 			socket.emit("set_username", n)
