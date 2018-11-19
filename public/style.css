@@ -1,0 +1,22 @@
+html {
+	height: 100%;
+}
+body {
+    background-color:darkgray;
+	height: inherit;
+	font-family: "sans-serif";
+}
+.container{
+	height: inherit;
+	background-color: white;
+}
+.title{
+	text-align: center;
+	display: inline-block;
+
+}
+#canvas{
+/*	display: inline-block;*/
+/*	margin: 0 auto;*/
+	margin-left:270px;
+}
