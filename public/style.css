@@ -1,14 +1,14 @@
 html {
-	height: 100%;
+  height: 100%;
 }
 body {
-    background-color:darkgray;
-	height: inherit;
-	font-family: "sans-serif";
+    background-color:twhite;
+	height: auto;
+	font-family: "Century Gothic";
 }
 .container{
 	height: inherit;
-	background-color: white;
+	background-color: ghostwhite;
 }
 .title{
 	text-align: center;
@@ -19,4 +19,10 @@ body {
 /*	display: inline-block;*/
 /*	margin: 0 auto;*/
 	margin-left:270px;
+}
+.rules{
+	text-align: justify;
+}
+.footer{
+	background-color: ghostwhite;
 }
