@@ -4,10 +4,21 @@ var playerName
 //this function is automatically called whenever the button on the page is clicked
 function enterName() {
 	var n = document.getElementById("name").value
-	socket.emit("set_username", n)
-	playerName = n
+	if(n != ""){
+		socket.emit("set_username", n)
+		playerName = n
+	}
 
 }
+
+socket.on("accept_username", function(accept){
+	if(accept){
+		document.getElementById("canvas").style = "display:block";
+		document.getElementById("name_set").style = "display:none;";
+	}else{
+		
+	}
+});
 
 //self explanatory here, just setting up canvas size and making sure its drawn in the right place
 function setup() {
