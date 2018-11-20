@@ -18,15 +18,20 @@ body {
 #canvas{
 /*	display: inline-block;*/
 /*	margin: 0 auto;*/
-<<<<<<< HEAD
-	/*margin-left:270px;*/
-=======
 /* 	margin-left:270px; */
->>>>>>> f1660b7a2d8f5e5bf78b10e99a13bf2c3e24b7bf
+display:none;
 }
 .rules{
 	text-align: justify;
 }
 .footer{
 	background-color: ghostwhite;
+}
+
+#footer_ul{
+	list-style-type: none;
+}
+
+.playing_space{
+	height:400px;
 }
