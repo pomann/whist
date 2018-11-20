@@ -1,84 +1,69 @@
 <!DOCTYPE html>
+<!--Dont add any javascript in this file, only html, any javascript should be written in an external file for easier reading-->
 <html lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Whist</title>
-	 <!--<link rel="stylesheet" type="text/css" href="./css/bootstrap-grid.min.css"> -->
-<!--	 <link rel="stylesheet" type="text/css" href="./css/bootstrap.css"> -->
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Whist</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-	 	<script src="/socket.io/socket.io.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+	<!--<script src="js/bootstrap.min.js"></script>-->
+	<!--<script src="./js/p5.min.js"></script>-->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
 
-	  <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
-	 <!--<script src="js/bootstrap.min.js"></script>-->
-	 <!--<script src="./js/p5.min.js"></script>-->
-	 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.js"></script>
-	 
-	 
-	 <script src="sketch.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-  </head>
- <body>
-<!--	  This centers the page for us-->
-	  <div class="container">
-		  <!--	Tilte of webpage  -->
-		  <div class="row">
-			  <div class="col-lg-12 title">
-			  	<h1>Whist</h1>
-			  </div>
-			
-		 </div>
-		  <hr>
-		  <!--	This is where the canvas is drawn	  -->
-		  <div class="row">
-			  <div class="col-lg-12 canvas row align-items-center justify-content-center" id="canvas">
-				  <!--	Canvas gets loaded in here by sketch.js	  -->
-			  </div>
-		  </div>
-		  <hr>
-		  <!--	row to explain the rules to the players	  -->
-		  <div class="row rules">
-			  <div class="col-lg-4">
-			  <input type="text" id="name" value="John Doe"> 
-			  <button onclick="enterName()">Enter your name</button>
+
+	<script src="sketch.js"></script>
+	<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+	<!--	  This centers the page for us-->
+	<div class="container">
+		<!--	Tilte of webpage  -->
+		<div class="row">
+			<div class="col-lg-12 title">
+				<h1>Whist</h1>
+			</div>
+		</div>
+		<hr>
+		<!--	This is where the canvas is drawn	  -->
+		<div class="row">
+			<div class="col-lg-12 canvas row align-items-center justify-content-center" id="canvas">
+				<!--	Canvas gets loaded in here by sketch.js	  -->
+			</div>
+		</div>
+		<hr>
+		<!--	row to explain the rules to the players	  -->
+		<div class="row rules">
+			<div class="col-lg-4">
+				<input type="text" id="name" value="John Doe">
+				<button onclick="enterName()">Enter your name</button>
 				<hr>
-				  <article>This name will be used to identify you to other players playing the game</article>
-			  </div>
-			  <div class="col-lg-4">
-				  <h3>Rules</h3>
-				  <hr>
-				 <article>Add rules of whist here plz</article>
-			  </div>
-			  <div class="col-lg-4">
-				  <article>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus magna non placerat iaculis. Aliquam luctus quis quam at rhoncus. Maecenas scelerisque fermentum erat at fringilla. Maecenas pellentesque vel diam sit amet scelerisque. Donec euismod tortor at suscipit accumsan. Donec ac felis nunc. Sed facilisis risus ipsum, quis consectetur enim vehicula ac. Morbi tincidunt venenatis vulputate.</article>
-			  </div>
-		  </div>
-	  </div>
-	  <br>
-	  <!--	footer  -->
-	   <footer class="footer">
-	      <div class="container">
-       			 <article>Made by Jamie Hyland.</article>
-				 <article>Roman jr PRHPSIUHRPAISUHDOFIGAER</article>
-			  	 <article>Uzair Ali</article>
-			     <article>Alex Thornberry</article>
-			  	 <article>Festus for the rest of us</article>
-		   </div>
-    </footer>
-  </body>
-<!--Get the player name from the input field and send it to the server-->
-	<script>
-		var socket = io.connect();
-  		
-		//this function is automatically called whenever the button above is clicked
-		//youll see the onclick="enterName" to signify this
-		function enterName(){
-			var n = document.getElementById("name").value
-			socket.emit("set_username", n)
-			
-		}
-	
-	</script>
+				<article>This name will be used to identify you to other players playing the game</article>
+			</div>
+			<div class="col-lg-4">
+				<h3>Rules</h3>
+				<hr>
+				<article>Add rules of whist here plz</article>
+			</div>
+			<div class="col-lg-4">
+				<article>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum cursus magna non placerat iaculis. Aliquam luctus quis quam at rhoncus. Maecenas scelerisque fermentum erat at fringilla. Maecenas pellentesque vel diam sit amet scelerisque. Donec euismod tortor at suscipit accumsan. Donec ac felis nunc. Sed facilisis risus ipsum, quis consectetur enim vehicula ac. Morbi tincidunt venenatis vulputate.</article>
+			</div>
+		</div>
+	</div>
+	<br>
+	<!--	footer  -->
+	<footer class="footer">
+		<div class="container">
+			<article>Made by Jamie Hyland</article>
+			<article>Roman jr PRHPSIUHRPAISUHDOFIGAER</article>
+			<article>Uzair Ali</article>
+			<article>Alex Thornberry</article>
+			<article>Festus for the rest of us</article>
+		</div>
+	</footer>
+</body>
 </html>
-
