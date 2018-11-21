@@ -2,7 +2,7 @@ html {
   height: 100%;
 }
 body {
-    background-color:twhite;
+    background-color:"twhite";
 	height: auto;
 	font-family: "Century Gothic";
 }
@@ -19,7 +19,7 @@ body {
 /*	display: inline-block;*/
 /*	margin: 0 auto;*/
 /* 	margin-left:270px; */
-display:none;
+	display:none;
 }
 .rules{
 	text-align: justify;
@@ -34,4 +34,18 @@ display:none;
 
 .playing_space{
 	height:400px;
+}
+
+#name_set{
+	
+}
+
+#lobby_set{
+	display:none;
+}
+
+#lobby_list{
+	border-top: 1px solid black;
+	width:100%;
+	
 }
