@@ -42,7 +42,7 @@ class Player {
 		this.id = id;
 		this.playerName;
 		this.hand;
-		this.inLobby;
+		this.inLobby = "";
 		this.playing = false;
 	}
 }
@@ -73,6 +73,7 @@ class Lobby {
 
 	start(){
 		for(var i = 0;i<this.waitingPlayers.length;i++){
+			console.log(soc[this.waitingPlayers[i]]);
 			players[soc[this.waitingPlayers[i]]].playing = true;
 			io.sockets.connected[this.waitingPlayers[i]].emit('start_game', true);
 		}
