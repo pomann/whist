@@ -47,5 +47,12 @@ body {
 #lobby_list{
 	border-top: 1px solid black;
 	width:100%;
+	color: blue;
 	
+}
+
+.error{
+	background-color: red;
+	text-align: center;
+	display: none;
 }
