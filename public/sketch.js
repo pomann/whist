@@ -24,7 +24,7 @@ socket.on("joined_lobby", function(accepted){
 		document.getElementById("lobby_set").style = "display:none";
 		document.getElementById("lobby").style = "display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;margin-right:-15px;margin-left:-15px;";
 	}else{
-		// Stay in lobby selection
+		// Stay in lobby selection and display error message
 	}
 });
 
@@ -33,12 +33,20 @@ socket.on("lobbies", function(lobby) {
    console.log(lobby);
 });
 
+// Server response to set username
 socket.on("accept_username", function(accepted){
+	// If accepted show lobby screen, hide name selection
 	if(accepted){
 		document.getElementById("lobby_set").style = "display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;margin-right:-15px;margin-left:-15px;";
 		document.getElementById("name_set").style = "display:none;";
+	// Else show error message
 	}else{
-		
+		document.getElementById("name_error").style = "display:block;";
+		// Clear error message after X ms where X is setTimeout(function(){do stuff here},X)
+		setTimeout(function(){
+			document.getElementById("name_error").style = "display:none;";
+			document.getElementById("name_error").innerHTML = "Username Taken";
+		},3200)
 	}
 });
 
