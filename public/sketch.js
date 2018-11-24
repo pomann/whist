@@ -15,6 +15,10 @@ socket.on("accept_lobby", function(accepted){
 		document.getElementById("lobby").style = "display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;margin-right:-15px;margin-left:-15px;";
 	}else{
 		// Stay in lobby selection
+		document.getElementById("lobby_exists_error").style = "display:block;";
+		setTimeout(function(){
+			document.getElementById("lobby_exists_error").style = "display:none;";
+		}, 3200)
 	}
 });
 
@@ -25,6 +29,10 @@ socket.on("joined_lobby", function(accepted){
 		document.getElementById("lobby").style = "display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;margin-right:-15px;margin-left:-15px;";
 	}else{
 		// Stay in lobby selection and display error message
+		document.getElementById("lobby_join_error").style = "display:block;";
+		setTimeout(function(){
+			document.getElementById("lobby_join_error").style = "display:none;";
+		}, 3200)
 	}
 });
 
@@ -67,6 +75,12 @@ function enterName() {
 	if(n != ""){
 		socket.emit("set_username", n);
 		playerName = n;
+	}else{
+		//error message for a username not being entered
+		document.getElementById("no_username_error").style = "display:block;";
+		setTimeout(function(){
+			document.getElementById("no_username_error").style = "display:none;";
+		}, 3200)
 	}
 
 }
