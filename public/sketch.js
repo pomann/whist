@@ -14,10 +14,11 @@ socket.on("accept_lobby", function(accepted){
 		document.getElementById("lobby_set").style = "display:none";
 		document.getElementById("lobby").style = "display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;margin-right:-15px;margin-left:-15px;";
 	}else{
-		// Stay in lobby selection
-		document.getElementById("lobby_exists_error").style = "display:block;";
+		// Stay in lobby selection because lobby name is taken
+		document.getElementById("lobby_error").style = "display:block;";
+		document.getElementById("lobby_error").innerHTML = "This Lobby Already Exists";
 		setTimeout(function(){
-			document.getElementById("lobby_exists_error").style = "display:none;";
+			document.getElementById("lobby_error").style = "display:none;";
 		}, 3200)
 	}
 });
@@ -29,9 +30,10 @@ socket.on("joined_lobby", function(accepted){
 		document.getElementById("lobby").style = "display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;margin-right:-15px;margin-left:-15px;";
 	}else{
 		// Stay in lobby selection and display error message
-		document.getElementById("lobby_join_error").style = "display:block;";
+		document.getElementById("lobby_error").style = "display:block;";
+		document.getElementById("lobby_error").innerHTML = "Unable To Join Lobby";
 		setTimeout(function(){
-			document.getElementById("lobby_join_error").style = "display:none;";
+			document.getElementById("lobby_error").style = "display:none;";
 		}, 3200)
 	}
 });
@@ -49,11 +51,11 @@ socket.on("accept_username", function(accepted){
 		document.getElementById("name_set").style = "display:none;";
 	// Else show error message
 	}else{
-		document.getElementById("name_error").style = "display:block;";
 		// Clear error message after X ms where X is setTimeout(function(){do stuff here},X)
+		document.getElementById("username_error").style = "display:block;";
+		document.getElementById("username_error").innerHTML = "Username Taken";
 		setTimeout(function(){
-			document.getElementById("name_error").style = "display:none;";
-			document.getElementById("name_error").innerHTML = "Username Taken";
+			document.getElementById("username_error").style = "display:none;";
 		},3200)
 	}
 });
@@ -77,9 +79,10 @@ function enterName() {
 		playerName = n;
 	}else{
 		//error message for a username not being entered
-		document.getElementById("no_username_error").style = "display:block;";
+		document.getElementById("username_error").style = "display:block;";
+		document.getElementById("username_error").innerHTML = "Please Select A Username";
 		setTimeout(function(){
-			document.getElementById("no_username_error").style = "display:none;";
+			document.getElementById("username_error").style = "display:none;";
 		}, 3200)
 	}
 
