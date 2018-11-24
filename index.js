@@ -39,7 +39,7 @@ var express = require('express')
 //player class for the game
 class Player {
 	constructor(id){
-		this.id = id;
+		this.ID = id;
 		this.playerName;
 		this.hand;
 		this.inLobby = "";
@@ -142,6 +142,12 @@ io.on('connection', function(socket){
 	        lobbies[lobbyName].addPlayer(socket.id);
 	        players[soc[socket.id]].inLobby = lobbyName;
 	        socket.emit('accept_lobby', true);
+	        for(var name in players){
+	        	if(players[name].playerName != ""){
+	        		console.log(players[name].ID)
+	        		io.sockets.connected[players[name].ID].emit("lobbies",[lobbyName]);
+	        	}
+	        }
 	    }
 	});
 	
