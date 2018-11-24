@@ -54,5 +54,5 @@ body {
 .error{
 	background-color: red;
 	text-align: center;
-	display: none;
+	display: block;
 }
