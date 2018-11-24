@@ -36,6 +36,8 @@
 			<!-- Setting name -->
 			<div class="col-lg-12 row align-items-center justify-content-center" id="name_set">
 				<div>
+					<!-- Error message hidden -->
+					<article class="error" id="name_error"></article>
 					<!-- Input and buttons for name -->
 					<input type="text" id="name" placeholder="Enter your name">
 					<button onclick="enterName()">Submit</button>
@@ -45,6 +47,7 @@
 			<!-- Picking/Creating lobbies -->
 			<div class="col-lg-12 row align-items-center justify-content-center" id="lobby_set">
 				<div style="height:100%;border:1px solid black;">
+					<article class="error" id="lobby_error"></article>
 					<!-- Input and buttons for lobbies -->
 					<input type="text" id="lobby_input" placeholder="Lobby Name">
 					<button onclick="joinLobby()">Join Lobby</button>
