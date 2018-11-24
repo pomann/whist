@@ -68,7 +68,12 @@ class Lobby {
 	
 	deletePlayer(playerId){
 		this.waitingPlayers.splice(this.waitingPlayers.indexOf(playerId),1);
-		this.deleteLobby();
+		for(var name in players){
+        	if(players[name].ID != playerId){
+        		io.sockets.connected[players[name].ID].emit("lobby_count",[players[soc[playerId]].inLobby,-1]);
+        	}
+        }
+		this.deleteLobby(playerId);
 	}
 
 	start(){
@@ -79,10 +84,18 @@ class Lobby {
 		}
 	}
 
-	deleteLobby(){
+	deleteLobby(playerId){
 		//deletes the lobby if it's empty
 		if(this.waitingPlayers.length == 0){
 			delete lobbies[this.lobbyName]
+			for(var name in players){
+	        	if(players[name].ID != playerId){
+	        		io.sockets.connected[players[name].ID].emit("lobby_update",true);
+		        	for(var key in lobbies) {
+		        		io.sockets.connected[players[name].ID].emit("lobbies",[key,lobbies[key].waitingPlayers.length]);
+		        	}
+	        	}
+	        }
 		}
 	}
 }
@@ -128,7 +141,7 @@ io.on('connection', function(socket){
         	console.log(username);
         	socket.emit("accept_username",true);
         	for(var key in lobbies) {
-    			socket.emit("lobbies",key);
+    			socket.emit("lobbies",[key,lobbies[key].waitingPlayers.length]);
         	}
     	}
     	console.log(players);
@@ -144,8 +157,7 @@ io.on('connection', function(socket){
 	        socket.emit('accept_lobby', true);
 	        for(var name in players){
 	        	if(players[name].playerName != ""){
-	        		console.log(players[name].ID)
-	        		io.sockets.connected[players[name].ID].emit("lobbies",[lobbyName]);
+	        		io.sockets.connected[players[name].ID].emit("lobbies",[lobbyName,1]);
 	        	}
 	        }
 	    }
@@ -156,6 +168,11 @@ io.on('connection', function(socket){
 	        players[soc[socket.id]].inLobby = lobbyName;
 	        socket.emit("joined_lobby", true);
 	        lobbies[lobbyName].addPlayer(socket.id);
+	        for(var name in players){
+	        	if(players[name].playerName != ""){
+	        		io.sockets.connected[players[name].ID].emit("lobby_count",[lobbyName,1]);
+	        	}
+	        }
 	    }else{
 	        socket.emit("joined_lobby", false);
 	    }

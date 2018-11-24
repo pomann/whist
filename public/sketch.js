@@ -39,8 +39,17 @@ socket.on("joined_lobby", function(accepted){
 });
 
 socket.on("lobbies", function(lobby) {
-   document.getElementById("lobbies").innerHTML += '<li>' + lobby + '</li>';
-   console.log(lobby);
+	document.getElementById("lobbies").innerHTML += '<li>' + lobby[0] + ' <span id="'+ lobby[0] +'_count" style="float:right;">'+ lobby[1] +'/4</span></li>';
+});
+
+socket.on("lobby_update", function(lobby) {
+	document.getElementById("lobbies").innerHTML = "";
+});
+
+socket.on("lobby_count",function(arr){
+	console.log(arr);
+	n = parseInt(document.getElementById(arr[0] + "_count").innerHTML[0]) + arr[1];
+	document.getElementById(arr[0] + "_count").innerHTML = n + "/4";
 });
 
 // Server response to set username
