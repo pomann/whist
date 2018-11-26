@@ -9,7 +9,7 @@
 //  |_____/ \____/|_| \_|    |_|       |_|  \____/ \____/ \_____|_|  |_|    |_|  |_|  |_|_____|_____/  |_|    |_____|______|______|
 //
 //
-//har har har har
+//
 //
 //
 //
@@ -47,6 +47,70 @@ class Player {
 	}
 }
 
+// Card class
+class Card {
+	constructor(value,suit) {
+		this.value = value;
+		this.suit = suit;
+	}
+}
+
+
+// Game class
+class Game {
+	constructor(players){
+		//keeps track of the players in the game
+		this.players = players;
+		//keeps track of the current player
+		this.cPlayer = cPlayer;
+		//keeps track of the trump card for the current round
+		this.trumpC = ["H","D","S","C"];
+		//keeps track of the score
+		this.score = score;
+	}
+
+	winningTrick(){
+		//calculate which player won the current trick
+	}
+
+	shuffleDeck(){
+		//shuffles the array of cards (deck of cards)
+		var deck = [];
+		for(var i = 0; i < this.trumpC.length; i++){
+			for(var j = 1; j < 14; j++){
+				if(j == 1) deck.push(new Card("A",this.trumpC[i]));
+				if(j == 11) deck.push(new Card("J",this.trumpC[i]));
+				if(j == 12) deck.push(new Card("Q",this.trumpC[i]));
+				if(j == 13) deck.push(new Card("K",this.trumpC[i]));
+				deck.push(new Card(j,this.trumpC[i]));
+			}
+		}
+
+	    var j, x, i;
+	    for (i = deck.length - 1; i > 0; i--) {
+	        j = Math.floor(Math.random() * (i + 1));
+	        x = deck[i];
+	        deck[i] = deck[j];
+	        deck[j] = x;
+	    }
+	    for(var i = 0; i<this.players.length;i++){
+	    	io.sockets.connected[this.players[i]].emit('player_hand', deck.splice((i+1)*13-13,(i+1)*13);
+		}
+	    // io.sockets.connected[this.waitingPlayers[i]].emit('player_hand', true);
+	    // return deck;
+	}
+
+	startNewGame(){
+		//starts a new game
+	}
+
+	newRound(){
+		//starts a new round
+	}
+}
+
+
+// Lobby class
 class Lobby {
 	constructor(lobbyName) {
 		this.lobbyName = lobbyName;
@@ -82,6 +146,7 @@ class Lobby {
 			players[soc[this.waitingPlayers[i]]].playing = true;
 			io.sockets.connected[this.waitingPlayers[i]].emit('start_game', true);
 		}
+		var game = new Game(waitingPlayers);
 	}
 
 	deleteLobby(playerId) {
