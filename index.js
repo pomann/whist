@@ -9,7 +9,7 @@
 //  |_____/ \____/|_| \_|    |_|       |_|  \____/ \____/ \_____|_|  |_|    |_|  |_|  |_|_____|_____/  |_|    |_____|______|______|
 //
 //
-//
+//har har har har
 //
 //
 //
@@ -38,7 +38,7 @@ var express = require('express')
 
 //player class for the game
 class Player {
-	constructor(id){
+	constructor(id) {
 		this.ID = id;
 		this.playerName;
 		this.hand;
@@ -48,137 +48,139 @@ class Player {
 }
 
 class Lobby {
-	constructor(lobbyName){
-	    this.lobbyName = lobbyName;
+	constructor(lobbyName) {
+		this.lobbyName = lobbyName;
 		this.waitingPlayers = [];
 		this.empty = false;
 	}
 
-	fullLobby(){
-		if(this.waitingPlayers.length == 4){
-		    delete lobbies[this.lobbyName];
-		    this.start();
+	fullLobby() {
+		if (this.waitingPlayers.length == 4) {
+			delete lobbies[this.lobbyName];
+			this.start();
 		}
 	}
-	
-	addPlayer(player){
-	    this.waitingPlayers.push(player);
-	    this.fullLobby()
+
+	addPlayer(player) {
+		this.waitingPlayers.push(player);
+		this.fullLobby()
 	}
-	
-	deletePlayer(playerId){
-		this.waitingPlayers.splice(this.waitingPlayers.indexOf(playerId),1);
-		for(var name in players){
-        	if(players[name].ID != playerId){
-        		io.sockets.connected[players[name].ID].emit("lobby_count",[players[soc[playerId]].inLobby,-1]);
-        	}
-        }
+
+	deletePlayer(playerId) {
+		this.waitingPlayers.splice(this.waitingPlayers.indexOf(playerId), 1);
+		for (var name in players) {
+			if (players[name].ID != playerId) {
+				io.sockets.connected[players[name].ID].emit("lobby_count", [players[soc[playerId]].inLobby, -1]);
+			}
+		}
 		this.deleteLobby(playerId);
 	}
 
-	start(){
-		for(var i = 0;i<this.waitingPlayers.length;i++){
+	start() {
+		for (var i = 0; i < this.waitingPlayers.length; i++) {
 			console.log(soc[this.waitingPlayers[i]]);
 			players[soc[this.waitingPlayers[i]]].playing = true;
 			io.sockets.connected[this.waitingPlayers[i]].emit('start_game', true);
 		}
 	}
 
-	deleteLobby(playerId){
+	deleteLobby(playerId) {
 		//deletes the lobby if it's empty
-		if(this.waitingPlayers.length == 0){
+		if (this.waitingPlayers.length == 0) {
 			delete lobbies[this.lobbyName]
-			for(var name in players){
-	        	if(players[name].ID != playerId){
-	        		io.sockets.connected[players[name].ID].emit("lobby_update",true);
-		        	for(var key in lobbies) {
-		        		io.sockets.connected[players[name].ID].emit("lobbies",[key,lobbies[key].waitingPlayers.length]);
-		        	}
-	        	}
-	        }
+			for (var name in players) {
+				if (players[name].ID != playerId) {
+					io.sockets.connected[players[name].ID].emit("lobby_update", true);
+					for (var key in lobbies) {
+						io.sockets.connected[players[name].ID].emit("lobbies", [key, lobbies[key].waitingPlayers.length]);
+					}
+				}
+			}
 		}
 	}
 }
 
-var lobbies = {"lobby1": new Lobby("lobby1")};
+var lobbies = {
+	"lobby1": new Lobby("lobby1")
+};
 
 //this will send the index.html file to the client when a GET request is sent to the server
 //read this if you wanna know more about whats going on, it'll help if you have to debug later
 //https://developer.mozilla.org/en-US/docs/Glossary/Callback_function 
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
-  app.use(express.static(path.join(__dirname, 'public')));
+app.get('/', function (req, res) {
+	res.sendFile(__dirname + '/index.html');
+	app.use(express.static(path.join(__dirname, 'public')));
 });
 
 
 //sets up a websocket connection with the client and some basic error handling for if a client 
 //disconnects, it also assigns them a unique ID
-io.on('connection', function(socket){
-    console.log('a user connected');
-    console.log(socket.id);
-    soc[socket.id] = "";
-    
-    socket.on('disconnect', function(){
-        if(soc[socket.id] != ""){
-        	if(players[soc[socket.id]].inLobby != "" && !players[soc[socket.id]].playing){
-        		lobbies[players[soc[socket.id]].inLobby].deletePlayer(socket.id);
-        	}
-        	delete players[soc[socket.id]];
-        }
-        delete soc[socket.id];
-        console.log(players);
-    });
-    
-	
-	//sets the player username 
-    socket.on('set_username', function(username){
-    	if(username in players){
-    		socket.emit("accept_username",false);
-		}else{
-    		soc[socket.id] = username;
-    		players[soc[socket.id]] = new Player(socket.id);
-    		players[soc[socket.id]].playerName = username;
-        	console.log(username);
-        	socket.emit("accept_username",true);
-        	for(var key in lobbies) {
-    			socket.emit("lobbies",[key,lobbies[key].waitingPlayers.length]);
-        	}
-    	}
-    	console.log(players);
-    });
-	
-	socket.on("create_lobby", function(lobbyName) {
-	    if(lobbyName in lobbies){
-	        socket.emit("accept_lobby", false);
-	    }else{
-	        lobbies[lobbyName] = new Lobby(lobbyName);
-	        lobbies[lobbyName].addPlayer(socket.id);
-	        players[soc[socket.id]].inLobby = lobbyName;
-	        socket.emit('accept_lobby', true);
-	        for(var name in players){
-	        	if(players[name].playerName != ""){
-	        		io.sockets.connected[players[name].ID].emit("lobbies",[lobbyName,1]);
-	        	}
-	        }
-	    }
+io.on('connection', function (socket) {
+	console.log('a user connected');
+	console.log(socket.id);
+	soc[socket.id] = "";
+
+	socket.on('disconnect', function () {
+		if (soc[socket.id] != "") {
+			if (players[soc[socket.id]].inLobby != "" && !players[soc[socket.id]].playing) {
+				lobbies[players[soc[socket.id]].inLobby].deletePlayer(socket.id);
+			}
+			delete players[soc[socket.id]];
+		}
+		delete soc[socket.id];
+		console.log(players);
 	});
-	
-	socket.on("join_lobby", function(lobbyName) {
-	    if(lobbyName in lobbies){
-	        players[soc[socket.id]].inLobby = lobbyName;
-	        socket.emit("joined_lobby", true);
-	        lobbies[lobbyName].addPlayer(socket.id);
-	        for(var name in players){
-	        	if(players[name].playerName != ""){
-	        		io.sockets.connected[players[name].ID].emit("lobby_count",[lobbyName,1]);
-	        	}
-	        }
-	    }else{
-	        socket.emit("joined_lobby", false);
-	    }
+
+
+	//sets the player username 
+	socket.on('set_username', function (username) {
+		if (username in players) {
+			socket.emit("accept_username", false);
+		} else {
+			soc[socket.id] = username;
+			players[soc[socket.id]] = new Player(socket.id);
+			players[soc[socket.id]].playerName = username;
+			console.log(username);
+			socket.emit("accept_username", true);
+			for (var key in lobbies) {
+				socket.emit("lobbies", [key, lobbies[key].waitingPlayers.length]);
+			}
+		}
+		console.log(players);
+	});
+
+	socket.on("create_lobby", function (lobbyName) {
+		if (lobbyName in lobbies) {
+			socket.emit("accept_lobby", false);
+		} else {
+			lobbies[lobbyName] = new Lobby(lobbyName);
+			lobbies[lobbyName].addPlayer(socket.id);
+			players[soc[socket.id]].inLobby = lobbyName;
+			socket.emit('accept_lobby', true);
+			for (var name in players) {
+				if (players[name].playerName != "") {
+					io.sockets.connected[players[name].ID].emit("lobbies", [lobbyName, 1]);
+				}
+			}
+		}
+	});
+
+	socket.on("join_lobby", function (lobbyName) {
+		if (lobbyName in lobbies) {
+			players[soc[socket.id]].inLobby = lobbyName;
+			socket.emit("joined_lobby", true);
+			lobbies[lobbyName].addPlayer(socket.id);
+			for (var name in players) {
+				if (players[name].playerName != "") {
+					io.sockets.connected[players[name].ID].emit("lobby_count", [lobbyName, 1]);
+				}
+			}
+		} else {
+			socket.emit("joined_lobby", false);
+		}
 	});
 });
 //set the server to listen on the port 3000
-http.listen(3000, function(){
-    console.log('listening on *:3000');
+http.listen(3000, function () {
+	console.log('listening on *:3000');
 });
