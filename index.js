@@ -24,17 +24,27 @@
 
 
 
-
-
-
-//these are basically the modules we need to input the app, think of them as imports from python
+// 
+// Server required variables
+// 
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var players = {};
-var soc = {};
 var path = require('path')
 var express = require('express')
+
+// 
+// Custom variables
+// 
+var players = {};
+var soc = {};
+var lobbies = {
+	"lobby1": new Lobby("lobby1")
+};
+
+// 
+// Custom Classes
+// 
 
 //player class for the game
 class Player {
@@ -62,11 +72,12 @@ class Game {
 		//keeps track of the players in the game
 		this.players = players;
 		//keeps track of the current player
-		this.cPlayer = cPlayer;
+		this.cPlayer;
 		//keeps track of the trump card for the current round
 		this.trumpC = ["H","D","S","C"];
 		//keeps track of the score
-		this.score = score;
+		this.score;
+		this.shuffleDeck();
 	}
 
 	winningTrick(){
@@ -74,7 +85,7 @@ class Game {
 	}
 
 	shuffleDeck(){
-		//shuffles the array of cards (deck of cards)
+		//Creates a deck of cards, shuffles the array of cards and every player is given 13 cards
 		var deck = [];
 		for(var i = 0; i < this.trumpC.length; i++){
 			for(var j = 1; j < 14; j++){
@@ -94,10 +105,10 @@ class Game {
 	        deck[j] = x;
 	    }
 	    for(var i = 0; i<this.players.length;i++){
-	    	io.sockets.connected[this.players[i]].emit('player_hand', deck.splice((i+1)*13-13,(i+1)*13);
+	    	var player_deck = deck.splice((i+1)*13-13,(i+1)*13);
+	    	players[soc[this.players[i]]].hand = player_deck;
+	    	io.sockets.connected[this.players[i]].emit('player_hand', player_deck);
 		}
-	    // io.sockets.connected[this.waitingPlayers[i]].emit('player_hand', true);
-	    // return deck;
 	}
 
 	startNewGame(){
@@ -117,19 +128,19 @@ class Lobby {
 		this.waitingPlayers = [];
 		this.empty = false;
 	}
-
+	// Starts game if lobby is full 
 	fullLobby() {
 		if (this.waitingPlayers.length == 4) {
 			delete lobbies[this.lobbyName];
 			this.start();
 		}
 	}
-
+	// Adds player into waiting_players and calls fullobby()
 	addPlayer(player) {
 		this.waitingPlayers.push(player);
 		this.fullLobby()
 	}
-
+	// If a player disconnects, deletes the player from waiting_players and updates info for clients, calls deleteLobby()
 	deletePlayer(playerId) {
 		this.waitingPlayers.splice(this.waitingPlayers.indexOf(playerId), 1);
 		for (var name in players) {
@@ -139,16 +150,16 @@ class Lobby {
 		}
 		this.deleteLobby(playerId);
 	}
-
+	// Sends info to clients saying game started and creates a new game object
 	start() {
 		for (var i = 0; i < this.waitingPlayers.length; i++) {
 			console.log(soc[this.waitingPlayers[i]]);
 			players[soc[this.waitingPlayers[i]]].playing = true;
 			io.sockets.connected[this.waitingPlayers[i]].emit('start_game', true);
 		}
-		var game = new Game(waitingPlayers);
+		var game = new Game(this.waitingPlayers);
 	}
-
+	// Deletes lobby id lobby empty 
 	deleteLobby(playerId) {
 		//deletes the lobby if it's empty
 		if (this.waitingPlayers.length == 0) {
@@ -165,9 +176,9 @@ class Lobby {
 	}
 }
 
-var lobbies = {
-	"lobby1": new Lobby("lobby1")
-};
+// 
+// Server handling requests coming in and sending responses
+// 
 
 //this will send the index.html file to the client when a GET request is sent to the server
 //read this if you wanna know more about whats going on, it'll help if you have to debug later
@@ -184,7 +195,7 @@ io.on('connection', function (socket) {
 	console.log('a user connected');
 	console.log(socket.id);
 	soc[socket.id] = "";
-
+	// On disconnect we remove all player data, update lobbies count and finish any started games
 	socket.on('disconnect', function () {
 		if (soc[socket.id] != "") {
 			if (players[soc[socket.id]].inLobby != "" && !players[soc[socket.id]].playing) {
@@ -197,7 +208,7 @@ io.on('connection', function (socket) {
 	});
 
 
-	//sets the player username 
+	//Sets the player info on set_username request  
 	socket.on('set_username', function (username) {
 		if (username in players) {
 			socket.emit("accept_username", false);
@@ -214,6 +225,7 @@ io.on('connection', function (socket) {
 		console.log(players);
 	});
 
+	//Creates lobby entry and joins the player on create_lobby request
 	socket.on("create_lobby", function (lobbyName) {
 		if (lobbyName in lobbies) {
 			socket.emit("accept_lobby", false);
@@ -230,6 +242,7 @@ io.on('connection', function (socket) {
 		}
 	});
 
+	//Joins the player into a lobby on join_lobby request
 	socket.on("join_lobby", function (lobbyName) {
 		if (lobbyName in lobbies) {
 			players[soc[socket.id]].inLobby = lobbyName;

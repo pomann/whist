@@ -16,9 +16,6 @@ body {
 
 }
 #canvas{
-/*	display: inline-block;*/
-/*	margin: 0 auto;*/
-/* 	margin-left:270px; */
 	display:none;
 }
 .rules{
