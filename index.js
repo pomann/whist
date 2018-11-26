@@ -38,9 +38,6 @@ var express = require('express')
 // 
 var players = {};
 var soc = {};
-var lobbies = {
-	"lobby1": new Lobby("lobby1")
-};
 
 // 
 // Custom Classes
@@ -62,7 +59,7 @@ class Card {
 	constructor(value,suit) {
 		this.value = value;
 		this.suit = suit;
-	}
+	} 
 }
 
 
@@ -89,13 +86,16 @@ class Game {
 		var deck = [];
 		for(var i = 0; i < this.trumpC.length; i++){
 			for(var j = 1; j < 14; j++){
+				
 				if(j == 1) deck.push(new Card("A",this.trumpC[i]));
-				if(j == 11) deck.push(new Card("J",this.trumpC[i]));
-				if(j == 12) deck.push(new Card("Q",this.trumpC[i]));
-				if(j == 13) deck.push(new Card("K",this.trumpC[i]));
-				deck.push(new Card(j,this.trumpC[i]));
+				else if(j == 11) deck.push(new Card("J",this.trumpC[i]));
+				else if(j == 12) deck.push(new Card("Q",this.trumpC[i]));
+				else if(j == 13) deck.push(new Card("K",this.trumpC[i]));
+				else deck.push(new Card(j,this.trumpC[i]));
 			}
 		}
+
+		console.log(deck);
 
 	    var j, x, i;
 	    for (i = deck.length - 1; i > 0; i--) {
@@ -130,7 +130,8 @@ class Lobby {
 	}
 	// Starts game if lobby is full 
 	fullLobby() {
-		if (this.waitingPlayers.length == 4) {
+		//change this back to 4 when game is complete
+		if (this.waitingPlayers.length == 1) {
 			delete lobbies[this.lobbyName];
 			this.start();
 		}
@@ -175,6 +176,11 @@ class Lobby {
 		}
 	}
 }
+
+
+var lobbies = {
+	"lobby1": new Lobby("lobby1")
+};
 
 // 
 // Server handling requests coming in and sending responses
