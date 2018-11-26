@@ -52,7 +52,7 @@ class Card {
 	constructor(value,suit) {
 		this.value = value;
 		this.suit = suit;
-	}
+	} 
 }
 
 
@@ -62,11 +62,13 @@ class Game {
 		//keeps track of the players in the game
 		this.players = players;
 		//keeps track of the current player
-		this.cPlayer = cPlayer;
+		this.cPlayer;
 		//keeps track of the trump card for the current round
 		this.trumpC = ["H","D","S","C"];
 		//keeps track of the score
-		this.score = score;
+		this.score;
+		
+		this.shuffleDeck();
 	}
 
 	winningTrick(){
@@ -78,11 +80,13 @@ class Game {
 		var deck = [];
 		for(var i = 0; i < this.trumpC.length; i++){
 			for(var j = 1; j < 14; j++){
+				
 				if(j == 1) deck.push(new Card("A",this.trumpC[i]));
 				if(j == 11) deck.push(new Card("J",this.trumpC[i]));
 				if(j == 12) deck.push(new Card("Q",this.trumpC[i]));
 				if(j == 13) deck.push(new Card("K",this.trumpC[i]));
 				deck.push(new Card(j,this.trumpC[i]));
+				console.log(new Card(j,this.trumpC[i]))
 			}
 		}
 
@@ -94,7 +98,7 @@ class Game {
 	        deck[j] = x;
 	    }
 	    for(var i = 0; i<this.players.length;i++){
-	    	io.sockets.connected[this.players[i]].emit('player_hand', deck.splice((i+1)*13-13,(i+1)*13);
+	    	io.sockets.connected[this.players[i]].emit('player_hand', deck.splice((i+1)*13-13,(i+1)*13));
 		}
 	    // io.sockets.connected[this.waitingPlayers[i]].emit('player_hand', true);
 	    // return deck;
@@ -119,7 +123,8 @@ class Lobby {
 	}
 
 	fullLobby() {
-		if (this.waitingPlayers.length == 4) {
+		//change this back to 4 when game is complete
+		if (this.waitingPlayers.length == 1) {
 			delete lobbies[this.lobbyName];
 			this.start();
 		}
@@ -146,7 +151,7 @@ class Lobby {
 			players[soc[this.waitingPlayers[i]]].playing = true;
 			io.sockets.connected[this.waitingPlayers[i]].emit('start_game', true);
 		}
-		var game = new Game(waitingPlayers);
+		var game = new Game(this.waitingPlayers);
 	}
 
 	deleteLobby(playerId) {
