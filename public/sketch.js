@@ -75,9 +75,15 @@ socket.on("start_game", function(accepted) {
     document.getElementById("lobby").style = "display:none;";
 })
 
+socket.on("player_hand",function(cards){
+		for(var i = 0; i < cards.length; i++){
+		c.drawImage("images/" + hand[i] +".png",0,0,19,19)
+		// hand.push(loadImage())
+		redraw()
+	}
+	})
 
-
-var arr = [{value: 8,suit: "C"},{value: 5,suit: "S"},{value: 12,suit: "D"},{value: "K",suit: "H"},{value: "J",suit: "C"},{value: 8,suit: "D"},{value: 9,suit: "C"},{value: 2,suit: "C"},{value: 2,suit: "S"},{value: 4,suit: "H"},{value: 1,suit: "C"},{value: 6,suit: "C"},{value: 3,suit: "D"}]
+var hand = []
 // 
 // JavaScript here
 // 
@@ -114,30 +120,15 @@ function joinLobby() {
 //self explanatory here, just setting up canvas size and making sure its drawn in the right place
 var val = "2"
 var suit = "D"
-
-var img
+var canvasDiv;
 var cards = []
 function setup() {
 	// put setup code here
 	var c = createCanvas(900, 700)
-	var canvasDiv = document.getElementById("canvas");
+	canvasDiv = document.getElementById("canvas");
 	c.parent(canvasDiv);
 	background(7, 99, 36);
 	fill(255);
-	
-	
-	
-	socket.on("player_hand",function(cards){
-	hand = cards
-	console.log(hand)
-		for(var i = 0; i < hand.length; i++){
-		let val = String(hand[i].value)
-		let suit = hand[i].suit
-		cards[i] = loadImage("images/" + val + suit +".png")
-		console.log(hand[i])
-		redraw()
-	}
-	})
 }
 
 //image()
@@ -145,8 +136,4 @@ function setup() {
 function draw() {
 //	text(playerName, 10, 10)
 	noLoop()
-	for(var i = 0; i < cards.length; i++){
-		image(cards[i],i*20, height/2, 120,160)
-		console.log(cards[i])
-	}
 }
