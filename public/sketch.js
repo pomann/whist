@@ -127,8 +127,8 @@ function setup() {
 	
 	
 	
-	socket.on("player_hand",function(cards){
-	hand = cards
+	socket.on("player_hand",function(c){
+	hand = c
 	console.log(hand)
 		for(var i = 0; i < hand.length; i++){
 		let val = String(hand[i].value)
@@ -138,15 +138,34 @@ function setup() {
 		redraw()
 	}
 	})
+	//redraw()
 }
 
 //image()
 //This draw function runs every frame
 function draw() {
-//	text(playerName, 10, 10)
-	noLoop()
-	for(var i = 0; i < cards.length; i++){
-		image(cards[i],i*20, height/2, 120,160)
-		console.log(cards[i])
+		background(7, 99, 36);
+
+	text(playerName, 10, 10)
+	let mX = mouseX
+	let mY = mouseY
+	for(var i = 0 ; i < cards.length; i++){
+		if(mX <= (120+(i*40)) && mX >= (i*40) && mY < height/2 && mY > ((height/2)+160)){
+			image(cards[i],i*40, (height/2)-40, 120,160)	
+		}else{
+		image(cards[i],(120+(i*20)), height/2, 120,160)
+		}
+	}
+	
+	
+	
+}
+
+
+
+function drawHand(arr){
+	for(var i = 0; i < arr.length; i++){
+		
+		//console.log(cards[i])
 	}
 }
