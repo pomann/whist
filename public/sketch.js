@@ -75,15 +75,15 @@ socket.on("start_game", function(accepted) {
     document.getElementById("lobby").style = "display:none;";
 })
 
-socket.on("player_hand",function(cards){
-		for(var i = 0; i < cards.length; i++){
-		c.drawImage("images/" + hand[i] +".png",0,0,19,19)
-		// hand.push(loadImage())
-		redraw()
+socket.on("played_card", function(accepted) {
+	if (accepted) {
+		played.push([cards[accepted],420, 380, 60,90])
+		cards.splice(accepted,1)
+	}else{
+		console.log("not your turn")
 	}
-	})
+})
 
-var hand = []
 // 
 // JavaScript here
 // 
@@ -120,20 +120,60 @@ function joinLobby() {
 //self explanatory here, just setting up canvas size and making sure its drawn in the right place
 var val = "2"
 var suit = "D"
-var canvasDiv;
+var img
 var cards = []
+var played = [];
+var init;
+
 function setup() {
 	// put setup code here
 	var c = createCanvas(900, 700)
-	canvasDiv = document.getElementById("canvas");
+	var canvasDiv = document.getElementById("canvas");
 	c.parent(canvasDiv);
 	background(7, 99, 36);
 	fill(255);
+	
+	
+	
+	socket.on("player_hand",function(c){
+		hand = c
+		console.log(hand)
+			for(var i = 0; i < hand.length; i++){
+			let val = String(hand[i].value)
+			let suit = hand[i].suit
+			cards[i] = loadImage("images/" + val + suit +".png")
+			console.log(hand[i])
+		}
+	})
 }
 
 //image()
 //This draw function runs every frame
 function draw() {
-//	text(playerName, 10, 10)
-	noLoop()
+	background(7, 99, 36);
+	init = 450 - ((cards.length - 1) * 30 + 60) / 2
+	text(playerName, 10, 10)
+	let mX = mouseX
+	let mY = mouseY
+	for(var i = 0 ; i < cards.length; i++){
+		if(mX <= (init + 30 +(i*30)) && mX >= (init+(i*30)) && mY <= 640 && mY >= 550){
+			image(cards[i],(init+(i*30)), 500, 60,90)	
+		}else{
+		image(cards[i],(init+(i*30)), 550, 60,90)
+		}
+	}
+	for (var i = 0; i < played.length; i++) {
+		image(played[i][0],played[i][1],played[i][2],played[i][3],played[i][4])
+	}
+}
+
+function mousePressed() {
+	console.log("clicked")
+	let mX = mouseX
+	let mY = mouseY
+	for(var i = 0 ; i < cards.length; i++){
+		if(mX <= (init + 30 +(i*30)) && mX >= (init+(i*30)) && mY <= 640 && mY >= 550){
+			socket.emit("played_card",[i,cards[i]])
+		}
+	}
 }

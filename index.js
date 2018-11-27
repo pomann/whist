@@ -38,7 +38,7 @@ var express = require('express')
 // 
 var players = {};
 var soc = {};
-
+var games = {};
 // 
 // Custom Classes
 // 
@@ -74,6 +74,7 @@ class Game {
 		this.trumpC = ["H","D","S","C"];
 		//keeps track of the score
 		this.score;
+		this.playedCards = {};
 		this.shuffleDeck();
 	}
 
@@ -158,7 +159,7 @@ class Lobby {
 			players[soc[this.waitingPlayers[i]]].playing = true;
 			io.sockets.connected[this.waitingPlayers[i]].emit('start_game', true);
 		}
-		var game = new Game(this.waitingPlayers);
+		games[this.lobbyName] = new Game(this.waitingPlayers);
 	}
 	// Deletes lobby id lobby empty 
 	deleteLobby(playerId) {
@@ -263,6 +264,18 @@ io.on('connection', function (socket) {
 			socket.emit("joined_lobby", false);
 		}
 	});
+
+	socket.on("played_card", function(arr){
+		for (var name in games[players[soc[socket.id]].inLobby].playedCards) {
+			if (name == socket.id) {
+				console.log("not your turn")
+				socket.emit("played_card",false);
+				return;
+			}
+		}
+		games[players[soc[socket.id]].inLobby].playedCards[socket.id] = arr[1]
+		socket.emit("played_card",arr[0]);
+	})
 });
 //set the server to listen on the port 3000
 http.listen(3000, function () {
