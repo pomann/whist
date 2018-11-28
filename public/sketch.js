@@ -75,10 +75,33 @@ socket.on("start_game", function(accepted) {
     document.getElementById("lobby").style = "display:none;";
 })
 
+socket.on("player_hand",function(c){
+	hand = c
+	console.log(hand)
+	for(var i = 0; i < hand.length; i++){
+		let val = String(hand[i].value)
+		let suit = hand[i].suit
+		cards.push(val + suit)
+	}
+	console.log(cards)
+})
+
 socket.on("played_card", function(accepted) {
 	if (accepted) {
-		played.push([cards[accepted],420, 380, 60,90])
-		cards.splice(accepted,1)
+		if (accepted[1] == 0) {
+			played.push([cards[accepted[0]],420, 380, 60,90])
+			cards.splice(accepted[0],1)
+			init_me = init_me +30;
+		}else if (accepted[1] == 1) {
+			played.push([cards[accepted[0]],300, 380, 60,90])
+			init_left = init_left -30;
+		}else if (accepted[1] == 2) {
+			played.push([cards[accepted[0]],420, 230, 60,90])
+			init_up = init_up +30;
+		} else if (accepted[1] == 3) {
+			played.push([cards[accepted[0]],500, 380, 60,90])
+			init_right = init_right -30;
+		}
 	}else{
 		console.log("not your turn")
 	}
@@ -118,13 +141,15 @@ function joinLobby() {
 }
 
 //self explanatory here, just setting up canvas size and making sure its drawn in the right place
-var val = "2"
-var suit = "D"
-var img
+var suit = ["H","D","C","S"];
+var cardback;
 var cards = []
 var played = [];
-var init;
-
+var init_me = 450 - (12 * 30 + 60) / 2;
+var init_up = 450 - (12 * 30 + 60) / 2;
+var init_left = (450 - (12 * 30 + 60) / 2) / 2 + 30;
+var init_right = (450 - (12 * 30 + 60) / 2) / 2 + 30;
+var all_cards = {};
 function setup() {
 	// put setup code here
 	var c = createCanvas(900, 700)
@@ -133,46 +158,63 @@ function setup() {
 	background(7, 99, 36);
 	fill(255);
 	
-	
-	
-	socket.on("player_hand",function(c){
-		hand = c
-		console.log(hand)
-			for(var i = 0; i < hand.length; i++){
-			let val = String(hand[i].value)
-			let suit = hand[i].suit
-			cards[i] = loadImage("images/" + val + suit +".png")
-			console.log(hand[i])
-		}
-	})
-}
+	cardback = loadImage("images/gray_back.png")
 
+	for(var i = 0; i < suit.length; i++){
+		for(var j = 1; j < 14; j++){
+			
+			if(j == 1) all_cards["A" + suit[i]] = loadImage("images/A" + suit[i] +".png");
+			else if(j == 11) all_cards["J" + suit[i]] = loadImage("images/J" + suit[i] +".png");
+			else if(j == 12) all_cards["Q" + suit[i]] = loadImage("images/Q" + suit[i] +".png");
+			else if(j == 13) all_cards["K" + suit[i]] = loadImage("images/K" + suit[i] +".png");
+			else all_cards[j + suit[i]] = loadImage("images/"+ j + suit[i] +".png");
+		}
+	}
+}
+// -30, 300 left cards center
+// -30, -390 right cards center
 //image()
 //This draw function runs every frame
 function draw() {
 	background(7, 99, 36);
-	init = 450 - ((cards.length - 1) * 30 + 60) / 2
 	text(playerName, 10, 10)
 	let mX = mouseX
 	let mY = mouseY
+
+	// Draws Player's cards
 	for(var i = 0 ; i < cards.length; i++){
-		if(mX <= (init + 30 +(i*30)) && mX >= (init+(i*30)) && mY <= 640 && mY >= 550){
-			image(cards[i],(init+(i*30)), 500, 60,90)	
+		if(mX <= (init_me + 30 +(i*30)) && mX >= (init_me+(i*30)) && mY <= 640 && mY >= 550){
+			image(all_cards[cards[i]],(init_me+(i*30)), 500, 60,90)	
 		}else{
-		image(cards[i],(init+(i*30)), 550, 60,90)
+		image(all_cards[cards[i]],(init_me+(i*30)), 550, 60,90)
 		}
 	}
+	// Draws played cards
 	for (var i = 0; i < played.length; i++) {
-		image(played[i][0],played[i][1],played[i][2],played[i][3],played[i][4])
+		image(all_cards[played[i][0]],played[i][1],played[i][2],played[i][3],played[i][4])
+	}
+	// Draws Teammates cards
+	for (var i = 0; i < 13; i++) {
+		image(cardback,(init_up+(i*30)), 60, 60,90)
+	}
+	// Turns cards 90 degrees by rotating the entire fucking canvas because DDDDDD p5 kill me
+	translate(width / 2, height / 2);
+	rotate(PI/2);
+	// Draws left opponent's cards
+	for (var i = 0; i < 13; i++) {
+		image(cardback,(init_left-(i*30)), 300, 60,90)
+	}
+	// Draws right opponent's cards
+	for (var i = 0; i < 13; i++) {
+		image(cardback,(init_right-(i*30)), -390, 60,90)
 	}
 }
 
 function mousePressed() {
-	console.log("clicked")
 	let mX = mouseX
 	let mY = mouseY
 	for(var i = 0 ; i < cards.length; i++){
-		if(mX <= (init + 30 +(i*30)) && mX >= (init+(i*30)) && mY <= 640 && mY >= 550){
+		if(mX <= (init_me + 30 +(i*30)) && mX >= (init_me+(i*30)) && mY <= 640 && mY >= 550){
 			socket.emit("played_card",[i,cards[i]])
 		}
 	}

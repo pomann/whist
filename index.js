@@ -19,11 +19,6 @@
 // 
 // 
 
-
-
-
-
-
 // 
 // Server required variables
 // 
@@ -69,7 +64,7 @@ class Game {
 		//keeps track of the players in the game
 		this.players = players;
 		//keeps track of the current player
-		this.cPlayer;
+		this.cPlayer = 0;
 		//keeps track of the trump card for the current round
 		this.trumpC = ["H","D","S","C"];
 		//keeps track of the score
@@ -106,7 +101,7 @@ class Game {
 	        deck[j] = x;
 	    }
 	    for(var i = 0; i<this.players.length;i++){
-	    	var player_deck = deck.splice((i+1)*13-13,(i+1)*13);
+	    	var player_deck = deck.splice(0,13);
 	    	players[soc[this.players[i]]].hand = player_deck;
 	    	io.sockets.connected[this.players[i]].emit('player_hand', player_deck);
 		}
@@ -132,7 +127,7 @@ class Lobby {
 	// Starts game if lobby is full 
 	fullLobby() {
 		//change this back to 4 when game is complete
-		if (this.waitingPlayers.length == 1) {
+		if (this.waitingPlayers.length == 4) {
 			delete lobbies[this.lobbyName];
 			this.start();
 		}
@@ -266,15 +261,32 @@ io.on('connection', function (socket) {
 	});
 
 	socket.on("played_card", function(arr){
-		for (var name in games[players[soc[socket.id]].inLobby].playedCards) {
-			if (name == socket.id) {
-				console.log("not your turn")
-				socket.emit("played_card",false);
-				return;
-			}
+		if (games[players[soc[socket.id]].inLobby].players[games[players[soc[socket.id]].inLobby].cPlayer] != socket.id) {
+			console.log("not your turn")
+			socket.emit("played_card",false);
+			return;
 		}
 		games[players[soc[socket.id]].inLobby].playedCards[socket.id] = arr[1]
-		socket.emit("played_card",arr[0]);
+		// socket.emit("played_card",arr[0]);
+		for(var i = 0; i < games[players[soc[socket.id]].inLobby].players.length; i++){
+			if (games[players[soc[socket.id]].inLobby].players[i] == socket.id) {
+				socket.emit("played_card",[arr[0],0]);
+			}else{
+				var count = 1
+				for (var j = i + 1; count < 3; j++) {
+					if(j == games[players[soc[socket.id]].inLobby].players.length) j = 0;
+					if (games[players[soc[socket.id]].inLobby].players[j] == socket.id) break;
+					count ++;
+				}
+				io.sockets.connected[games[players[soc[socket.id]].inLobby].players[i]].emit("played_card",[arr[0],count])
+
+			}
+		}
+		games[players[soc[socket.id]].inLobby].cPlayer ++;
+		if (games[players[soc[socket.id]].inLobby].cPlayer > 3) {
+			// caclulate winning trick, 
+			games[players[soc[socket.id]].inLobby].cPlayer = 0
+		}
 	})
 });
 //set the server to listen on the port 3000
