@@ -110,6 +110,10 @@ socket.on("played_card", function(accepted) {
 	}
 })
 
+socket.on("new_round", function(accepted){
+	played = [];
+})
+
 // 
 // JavaScript here
 // 

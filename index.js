@@ -74,7 +74,9 @@ class Game {
 	}
 
 	winningTrick(){
-		//calculate which player won the current trick
+		//calculate which player won the current trick and starts a new round
+		this.playedCards = {};
+		this.newRound();
 	}
 
 	shuffleDeck(){
@@ -112,7 +114,9 @@ class Game {
 	}
 
 	newRound(){
-		//starts a new round
+		for (var i = 0; i < this.players.length; i++) {
+			io.sockets.connected[this.players[i]].emit("new_round",true);
+		}
 	}
 }
 
@@ -281,6 +285,9 @@ io.on('connection', function (socket) {
 				io.sockets.connected[games[players[soc[socket.id]].inLobby].players[i]].emit("played_card",[arr[1],count])
 
 			}
+		}
+		if(Object.keys(games[players[soc[socket.id]].inLobby].playedCards).length == 4){
+			games[players[soc[socket.id]].inLobby].winningTrick()
 		}
 		games[players[soc[socket.id]].inLobby].cPlayer ++;
 		if (games[players[soc[socket.id]].inLobby].cPlayer > 3) {
