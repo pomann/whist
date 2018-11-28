@@ -278,7 +278,7 @@ io.on('connection', function (socket) {
 					if (games[players[soc[socket.id]].inLobby].players[j] == socket.id) break;
 					count ++;
 				}
-				io.sockets.connected[games[players[soc[socket.id]].inLobby].players[i]].emit("played_card",[arr[0],count])
+				io.sockets.connected[games[players[soc[socket.id]].inLobby].players[i]].emit("played_card",[arr[1],count])
 
 			}
 		}

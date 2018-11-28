@@ -89,18 +89,21 @@ socket.on("player_hand",function(c){
 socket.on("played_card", function(accepted) {
 	if (accepted) {
 		if (accepted[1] == 0) {
-			played.push([cards[accepted[0]],420, 380, 60,90])
+			played[0] = [cards[accepted[0]],420, 380, 60,90]
 			cards.splice(accepted[0],1)
 			init_me = init_me +30;
 		}else if (accepted[1] == 1) {
-			played.push([cards[accepted[0]],300, 380, 60,90])
+			played[1] = [accepted[0],-30, 30, 60,90]
 			init_left = init_left -30;
+			left--;
 		}else if (accepted[1] == 2) {
-			played.push([cards[accepted[0]],420, 230, 60,90])
+			played[2] = [accepted[0],420, 230, 60,90]
 			init_up = init_up +30;
+			up --;
 		} else if (accepted[1] == 3) {
-			played.push([cards[accepted[0]],500, 380, 60,90])
+			played[3] = [accepted[0],-30, -120, 60,90]
 			init_right = init_right -30;
+			right--;
 		}
 	}else{
 		console.log("not your turn")
@@ -149,6 +152,9 @@ var init_me = 450 - (12 * 30 + 60) / 2;
 var init_up = 450 - (12 * 30 + 60) / 2;
 var init_left = (450 - (12 * 30 + 60) / 2) / 2 + 30;
 var init_right = (450 - (12 * 30 + 60) / 2) / 2 + 30;
+var up = 13;
+var left = 13;
+var right = 13;
 var all_cards = {};
 function setup() {
 	// put setup code here
@@ -190,23 +196,34 @@ function draw() {
 		}
 	}
 	// Draws played cards
-	for (var i = 0; i < played.length; i++) {
-		image(all_cards[played[i][0]],played[i][1],played[i][2],played[i][3],played[i][4])
+	for (var i = 0; i < played.length; i = i + 2) {
+		try{
+			image(all_cards[played[i][0]],played[i][1],played[i][2],played[i][3],played[i][4])
+		}catch(e){
+
+		}
 	}
 	// Draws Teammates cards
-	for (var i = 0; i < 13; i++) {
+	for (var i = 0; i < up; i++) {
 		image(cardback,(init_up+(i*30)), 60, 60,90)
 	}
 	// Turns cards 90 degrees by rotating the entire fucking canvas because DDDDDD p5 kill me
 	translate(width / 2, height / 2);
 	rotate(PI/2);
 	// Draws left opponent's cards
-	for (var i = 0; i < 13; i++) {
+	for (var i = 0; i < left; i++) {
 		image(cardback,(init_left-(i*30)), 300, 60,90)
 	}
 	// Draws right opponent's cards
-	for (var i = 0; i < 13; i++) {
+	for (var i = 0; i < right; i++) {
 		image(cardback,(init_right-(i*30)), -390, 60,90)
+	}
+	for (var i = 1; i < played.length; i = i + 2) {
+		try{
+			image(all_cards[played[i][0]],played[i][1],played[i][2],played[i][3],played[i][4])
+		}catch(e){
+
+		}
 	}
 }
 
