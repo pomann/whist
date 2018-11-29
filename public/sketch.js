@@ -106,7 +106,13 @@ socket.on("played_card", function(accepted) {
 			right--;
 		}
 	}else{
-		console.log("not your turn")
+		// console.log("not your turn")
+		document.getElementById("not_your_turn_error").style = "display:block;";
+		document.getElementById("not_your_turn_error").innerHTML = "Not Your Turn";
+		setTimeout(function(){
+			document.getElementById("not_your_turn_error").style = "display:none;";
+		}, 3200)
+
 	}
 })
 
